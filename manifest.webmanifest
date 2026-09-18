@@ -1,0 +1,17 @@
+{
+  "name": "Accordion Music — PWA Player",
+  "short_name": "Accordion Music",
+  "description": "Sleek minimal PWA music player with Accordion Gallery song picker. Play your local folder.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060010",
+  "theme_color": "#060010",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

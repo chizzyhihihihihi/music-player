@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Accordion Music — PWA Player</title>
+    <meta name="description" content="Sleek minimal PWA music player. Open a folder, pick songs in an accordion gallery." />
+    <meta name="theme-color" content="#060010" />
+    <!-- All URLs are relative so this works on GitHub Pages project sites (user.github.io/repo/) with zero build. -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Accordion Music" />
+    <link rel="stylesheet" href="./css/accordion-gallery.css" />
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__logo">♫</div>
+          <div>
+            <h1>Accordion Music</h1>
+            <p>PWA · local-folder player · accordion picker</p>
+          </div>
+        </div>
+        <button class="btn btn--primary" id="btn-open">📁 Open music folder</button>
+        <button class="btn btn--ghost" id="btn-trigger" title="How panels expand">Expand: hover</button>
+      </header>
+
+      <div class="install-bar" id="install-bar" hidden>
+        <span>📲 Install this player for offline + fullscreen playback.</span>
+        <button class="btn btn--primary" id="btn-install">Install app</button>
+      </div>
+
+      <section class="hero" id="hero">
+        <h2>Your folder becomes a gallery.</h2>
+        <p>
+          Pick a local music folder — nothing is uploaded. Tracks are read in your browser,
+          cover art is extracted when present (otherwise generated), and the expanded accordion
+          panel is your song picker. Works offline once installed as a PWA.
+        </p>
+        <div class="hero__actions">
+          <button class="btn btn--primary" id="btn-open-2">📁 Choose folder</button>
+          <button class="btn" id="btn-demo">✨ Try demo playlist</button>
+        </div>
+        <div class="hero__hint">
+          Chromium: File System Access API (subfolders included, folder can be remembered).
+          Safari / Firefox: classic folder input fallback. You can also drag &amp; drop files anywhere.
+        </div>
+      </section>
+
+      <div id="library" hidden>
+        <div class="toolbar">
+          <label class="search">
+            <span aria-hidden="true">🔍</span>
+            <input id="search" placeholder="Search songs…" aria-label="Search songs" autocomplete="off" />
+            <button class="icon-btn" id="btn-clear-search" title="Clear">✕</button>
+          </label>
+          <select id="sort" aria-label="Sort">
+            <option value="name">Sort · Title</option>
+            <option value="artist">Sort · Artist</option>
+            <option value="duration">Sort · Duration</option>
+          </select>
+          <span class="count" id="count"></span>
+          <button class="btn btn--ghost" id="btn-change">↺ Change folder</button>
+          <button class="btn btn--ghost" id="btn-reconnect" hidden>⛁ Reconnect saved</button>
+        </div>
+
+        <div class="error" id="error" hidden></div>
+        <div class="progress" id="progress" hidden></div>
+
+        <div class="gallery-wrap">
+          <div class="gallery-head">
+            <h3>Song picker</h3>
+            <span>Hover or tap to expand · click the big panel to play · ←/→ keys move · Space toggles</span>
+          </div>
+          <div id="gallery"></div>
+          <div class="progress" id="gallery-note" hidden></div>
+          <div class="drop-hint" id="drop-hint">Tip: drag &amp; drop audio files anywhere to add them.</div>
+          <div class="queue" id="queue"></div>
+        </div>
+      </div>
+
+      <footer class="foot">
+        Private by design — files never leave your device. Installable PWA · Media Session controls ·
+        <span id="foot-fs">checking folder support…</span>
+      </footer>
+
+      <input id="fallback-input" type="file" webkitdirectory multiple hidden />
+      <audio id="audio" preload="metadata"></audio>
+
+      <div class="player">
+        <canvas class="player__viz" id="viz" width="280" height="36" aria-hidden="true"></canvas>
+        <div class="player__main">
+          <div class="player__track">
+            <img class="player__cover" id="p-cover" alt="" style="display:none" />
+            <div class="player__meta">
+              <div class="player__title" id="p-title">No song selected</div>
+              <div class="player__artist" id="p-artist">Open a music folder to begin</div>
+            </div>
+          </div>
+          <div class="player__center">
+            <div class="player__controls">
+              <button class="icon-btn" id="btn-shuffle" title="Shuffle" aria-pressed="false">⇄</button>
+              <button class="icon-btn" id="btn-prev" title="Previous">⏮</button>
+              <button class="play-btn" id="btn-play" title="Play">▶</button>
+              <button class="icon-btn" id="btn-next" title="Next">⏭</button>
+              <button class="icon-btn" id="btn-repeat" title="Repeat: all">🔁</button>
+            </div>
+            <div class="player__seek">
+              <span class="t" id="time-cur">0:00</span>
+              <input type="range" class="seek" id="seek" min="0" max="0" step="0.1" value="0" aria-label="Seek" />
+              <span class="t" id="time-dur">0:00</span>
+            </div>
+          </div>
+          <div class="player__right">
+            <button class="icon-btn" id="btn-mute" title="Mute">🔊</button>
+            <input type="range" class="vol" id="vol" min="0" max="1" step="0.01" value="0.9" aria-label="Volume" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Local scripts only. CDN libraries (GSAP, jsmediatags) load lazily from js/app.js with fallbacks. -->
+    <script src="./js/gallery.js"></script>
+    <script src="./js/library.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
